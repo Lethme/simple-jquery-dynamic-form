@@ -23,6 +23,15 @@ $(() => {
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
+                            <div class="form-group mb-xs-5">
+                                <label class="mb-xs-5" for="editInputTextJustify">Выравнивание текста</label>
+                                <select class="form-control" id="editInputTextJustify">
+                                    <option value="left">По левому краю</option>
+                                    <option value="right">По правому краю</option>
+                                    <option value="center">По центру</option>
+                                    <option value="justify">По ширине</option>
+                                </select>
+                            </div>
                             <form id="editForm" class="form w-xs-100">
                                 <div class="form-group">
                                     <label class="mb-xs-5" for="editInputText">Текст</label>
@@ -51,7 +60,7 @@ $(() => {
                     <button type="button" class="accordion-button collapsed remove-button w-xs-auto" data-item-id="` + item.id + `" data-bs-toggle="collapse" data-bs-target="#collapse` + item.id + `" aria-expanded="true" aria-controls="collapse` + item.id + `">&#10006;</button>
                 </h2>
                 <div id="collapse` + item.id + `" class="accordion-collapse collapse" aria-labelledby="heading` + item.id + `" data-bs-parent="#contentAccordion">
-                    <div class="accordion-body text-` + item.textJustify + `">
+                    <div class="accordion-body text-` + item.textJustify + ` text-wrap">
                         ` + item.text.replace(/\n/g, '<br/>') + `
                     </div>
                 </div>
@@ -116,6 +125,7 @@ $(() => {
                 $('#modalEditForm').remove();
                 $('.page').append(createEditFormTemplate(item));
 
+                $('#editInputTextJustify').val(item.textJustify);
                 $('#editInputText').val(item.text.replaceAll('<br/>', '\n'));
 
                 let editForm = new bootstrap.Modal($('#modalEditForm'), {
@@ -125,6 +135,7 @@ $(() => {
                 $('#editForm').on('submit', e => {
                     e.preventDefault();
                     item.text = $('#editInputText').val().replaceAll('<br/>', '\n');
+                    item.textJustify = $('#editInputTextJustify').val();
                     editForm.hide();
                     updateAccordion();
                 });
