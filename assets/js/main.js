@@ -96,49 +96,53 @@ $(() => {
 
     let updateAccordion = () => {
         accordion.empty();
-        items.forEach(item => {
-            accordion.append(item.getTemplate());
-        });
-        removeBtns().on('click', e => {
-            e.preventDefault();
-            let btnElement = $(e.target);
-            let itemId = btnElement.attr('data-item-id');
-            removeItemById(itemId);
-            updateItemsIds();
-            updateAccordion();
-        });
-        editBtns().on('click', e => {
-            e.preventDefault();
-            let btnElement = $(e.target);
-            let item = getItemById(btnElement.attr('data-item-id'));
-
-            $('#modalEditForm').remove();
-            $('.page').append(createEditFormTemplate(item));
-
-            $('#editInputText').val(item.text.replaceAll('<br/>', '\n'));
-
-            let editForm = new bootstrap.Modal($('#modalEditForm'), {
-                focus: true
+        if (items.length !== 0) {
+            items.forEach(item => {
+                accordion.append(item.getTemplate());
             });
-
-            $('#editForm').on('submit', e => {
+            removeBtns().on('click', e => {
                 e.preventDefault();
-                item.text = $('#editInputText').val().replaceAll('<br/>', '\n');
-                editForm.hide();
+                let btnElement = $(e.target);
+                let itemId = btnElement.attr('data-item-id');
+                removeItemById(itemId);
+                updateItemsIds();
                 updateAccordion();
             });
+            editBtns().on('click', e => {
+                e.preventDefault();
+                let btnElement = $(e.target);
+                let item = getItemById(btnElement.attr('data-item-id'));
 
-            $('#editBtnApply').on('click', e => {
-                $('#editForm').trigger('submit');
-            });
-
-            $('#modalEditForm').on('hidden.bs.modal', () => {
-                editForm.dispose();
                 $('#modalEditForm').remove();
-            });
+                $('.page').append(createEditFormTemplate(item));
 
-            editForm.show();
-        });
+                $('#editInputText').val(item.text.replaceAll('<br/>', '\n'));
+
+                let editForm = new bootstrap.Modal($('#modalEditForm'), {
+                    focus: true
+                });
+
+                $('#editForm').on('submit', e => {
+                    e.preventDefault();
+                    item.text = $('#editInputText').val().replaceAll('<br/>', '\n');
+                    editForm.hide();
+                    updateAccordion();
+                });
+
+                $('#editBtnApply').on('click', e => {
+                    $('#editForm').trigger('submit');
+                });
+
+                $('#modalEditForm').on('hidden.bs.modal', () => {
+                    editForm.dispose();
+                    $('#modalEditForm').remove();
+                });
+
+                editForm.show();
+            });
+        } else {
+            accordion.append('<h1 class="items-empty-alert text-center">В списке нет элементов</h1>')
+        }
     };
 
     let addItem = (title, text, textJustify = TextJustify.Left) => {
